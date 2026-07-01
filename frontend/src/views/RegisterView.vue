@@ -3,30 +3,20 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
-import { Iphone, Lock, User } from '@element-plus/icons-vue'
+import { Lock, User } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const auth = useAuthStore()
 
 const username = ref('')
-const phone = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const loading = ref(false)
 
-const PHONE_REGEX = /^1[3-9]\d{9}$/
 
 async function handleRegister(): Promise<void> {
   if (!username.value.trim()) {
     ElMessage.warning('请输入用户名')
-    return
-  }
-  if (!phone.value.trim()) {
-    ElMessage.warning('请输入手机号')
-    return
-  }
-  if (!PHONE_REGEX.test(phone.value.trim())) {
-    ElMessage.warning('请输入正确的手机号格式')
     return
   }
   if (!password.value) {
@@ -44,7 +34,7 @@ async function handleRegister(): Promise<void> {
 
   loading.value = true
   try {
-    await auth.register(phone.value.trim(), password.value, username.value.trim())
+    await auth.register(username.value.trim(), password.value)
     ElMessage.success('注册成功')
     router.push('/')
   } catch (error) {
@@ -74,15 +64,6 @@ async function handleRegister(): Promise<void> {
             v-model="username"
             placeholder="请输入用户名"
             :prefix-icon="User"
-            size="large"
-          />
-        </el-form-item>
-
-        <el-form-item label="手机号">
-          <el-input
-            v-model="phone"
-            placeholder="请输入手机号"
-            :prefix-icon="Iphone"
             size="large"
           />
         </el-form-item>

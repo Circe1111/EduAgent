@@ -17,49 +17,36 @@ export const useAuthStore = defineStore('auth', () => {
   const user = ref<UserInfo | null>(null)
   const isAuthenticated = computed(() => !!token.value)
 
-  async function login(phone: string, password: string): Promise<void> {
-    const formData = new URLSearchParams()
-    formData.append('username', phone)
-    formData.append('password', password)
-
+  async function login(username: string, password: string): Promise<void> {
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL || '/api'}/auth/login`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: formData,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password }),
       },
     )
 
     if (!response.ok) {
-      const error = await response.json().catch(() => null)
-      throw new Error(error?.detail || '登录失败，请检查手机号和密码')
+      throw new Error('用户名或密码错误')
     }
 
     const data = await response.json()
     token.value = data.access_token
     localStorage.setItem('eduagent_token', data.access_token)
-    user.value = {
-      id: data.user_id,
-      username: data.username,
-      phone: phone,
-      daily_goal: 0,
-      total_xp: 0,
-      created_at: '',
-    }
   }
 
   async function register(
-    phone: string,
-    password: string,
     username: string,
+    password: string,
+    phone?: string,
   ): Promise<void> {
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL || '/api'}/auth/register`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phone, password, username }),
+        body: JSON.stringify({ username, password, phone: phone || '' }),
       },
     )
 
@@ -71,14 +58,6 @@ export const useAuthStore = defineStore('auth', () => {
     const data = await response.json()
     token.value = data.access_token
     localStorage.setItem('eduagent_token', data.access_token)
-    user.value = {
-      id: data.user_id,
-      username: data.username,
-      phone: phone,
-      daily_goal: 0,
-      total_xp: 0,
-      created_at: '',
-    }
   }
 
   function logout(): void {

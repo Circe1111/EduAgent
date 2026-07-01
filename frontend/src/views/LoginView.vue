@@ -3,18 +3,18 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { ElMessage } from 'element-plus'
-import { Iphone, Lock } from '@element-plus/icons-vue'
+import { User, Lock } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const auth = useAuthStore()
 
-const phone = ref('')
+const username = ref('')
 const password = ref('')
 const loading = ref(false)
 
 async function handleLogin(): Promise<void> {
-  if (!phone.value.trim()) {
-    ElMessage.warning('请输入手机号')
+  if (!username.value.trim()) {
+    ElMessage.warning('请输入用户名')
     return
   }
   if (!password.value) {
@@ -24,7 +24,7 @@ async function handleLogin(): Promise<void> {
 
   loading.value = true
   try {
-    await auth.login(phone.value.trim(), password.value)
+    await auth.login(username.value.trim(), password.value)
     ElMessage.success('登录成功')
     router.push('/')
   } catch (error) {
@@ -49,11 +49,11 @@ async function handleLogin(): Promise<void> {
         @submit.prevent="handleLogin"
         label-position="top"
       >
-        <el-form-item label="手机号">
+        <el-form-item label="用户名">
           <el-input
-            v-model="phone"
-            placeholder="请输入手机号"
-            :prefix-icon="Iphone"
+            v-model="username"
+            placeholder="请输入用户名"
+            :prefix-icon="User"
             size="large"
           />
         </el-form-item>
