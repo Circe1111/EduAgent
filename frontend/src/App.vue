@@ -27,12 +27,12 @@ const isAuthPage = computed(
 )
 
 const menuItems = [
-  { index: '/dashboard', label: '\u9996\u9875', icon: Odometer },
-  { index: '/', label: '\u5bf9\u8bdd', icon: ChatDotRound },
-  { index: '/path', label: '\u5b66\u4e60\u8def\u5f84', icon: Guide },
-  { index: '/profile', label: '\u5b66\u751f\u753b\u50cf', icon: User },
-  { index: '/favorites', label: '\u6536\u85cf\u5939', icon: Star },
-  { index: '/prompts', label: 'Prompt\u6a21\u677f', icon: Promotion },
+  { index: '/dashboard', label: '首页', icon: Odometer },
+  { index: '/', label: '对话', icon: ChatDotRound },
+  { index: '/path', label: '学习路径', icon: Guide },
+  { index: '/profile', label: '学生画像', icon: User },
+  { index: '/favorites', label: '收藏夹', icon: Star },
+  { index: '/prompts', label: 'Prompt模板', icon: Promotion },
 ]
 
 function toggleSidebar() {

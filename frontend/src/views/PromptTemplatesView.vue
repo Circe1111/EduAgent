@@ -33,7 +33,7 @@ async function loadTemplates(): Promise<void> {
     const data = await promptTemplatesApi.list()
     templates.value = data
   } catch {
-    ElMessage.error('\u52a0\u8f7dPrompt\u6a21\u677f\u5931\u8d25')
+    ElMessage.error('加载Prompt模板失败')
   } finally {
     loading.value = false
   }
@@ -53,9 +53,9 @@ async function copyTemplateText(): Promise<void> {
   if (!selectedTemplate.value) return
   try {
     await navigator.clipboard.writeText(selectedTemplate.value.template_text)
-    ElMessage.success('\u5df2\u590d\u5236\u5230\u526a\u8d34\u677f')
+    ElMessage.success('已复制到剪贴板')
   } catch {
-    ElMessage.error('\u590d\u5236\u5931\u8d25')
+    ElMessage.error('复制失败')
   }
 }
 
@@ -66,15 +66,15 @@ onMounted(loadTemplates)
   <div class="prompts-view">
     <div class="page-header">
       <div class="header-info">
-        <h2>Prompt\u6a21\u677f\u5e93</h2>
+        <h2>Prompt模板库</h2>
         <span class="header-count"
-          >\u5171 {{ filteredTemplates.length }} \u4e2a\u6a21\u677f</span
+          >共 {{ filteredTemplates.length }} 个模板</span
         >
       </div>
       <el-input
         v-model="searchQuery"
         class="search-input"
-        placeholder="\u641c\u7d22\u6a21\u677f\u540d\u79f0\u3001\u7f16\u7801\u6216\u573a\u666f..."
+        placeholder="搜索模板名称、编码或场景..."
         clearable
         :prefix-icon="Search"
       />
@@ -108,7 +108,7 @@ onMounted(loadTemplates)
             </div>
             <h3 class="card-title">{{ template.title }}</h3>
             <div class="card-role">
-              <span class="role-label">\u89d2\u8272\u8bbe\u5b9a\uff1a</span>
+              <span class="role-label">角色设定：</span>
               <span class="role-value">{{ template.role }}</span>
             </div>
             <div class="card-variables" v-if="template.variables && template.variables.length > 0">
@@ -124,7 +124,7 @@ onMounted(loadTemplates)
               </el-tag>
             </div>
             <div class="card-scenario">
-              <span class="scenario-label">\u4f7f\u7528\u573a\u666f\uff1a</span>
+              <span class="scenario-label">使用场景：</span>
               <span class="scenario-value">{{ template.scenario }}</span>
             </div>
           </el-card>
@@ -132,7 +132,7 @@ onMounted(loadTemplates)
 
         <el-empty
           v-else
-          description="\u6682\u65e0\u6a21\u677f"
+          description="暂无模板"
           :image-size="80"
         />
       </template>
@@ -141,7 +141,7 @@ onMounted(loadTemplates)
     <!-- Detail Drawer -->
     <el-drawer
       v-model="drawerVisible"
-      :title="selectedTemplate?.title || 'Prompt\u8be6\u60c5'"
+      :title="selectedTemplate?.title || 'Prompt详情'"
       direction="rtl"
       size="480px"
       @close="closeDetail"
@@ -149,21 +149,21 @@ onMounted(loadTemplates)
       <template v-if="selectedTemplate">
         <div class="drawer-section">
           <div class="drawer-field">
-            <span class="field-label">\u6a21\u677f\u7f16\u7801</span>
+            <span class="field-label">模板编码</span>
             <el-tag size="small" type="primary" effect="plain">
               {{ selectedTemplate.code }}
             </el-tag>
           </div>
           <div class="drawer-field">
-            <span class="field-label">\u6807\u9898</span>
+            <span class="field-label">标题</span>
             <span class="field-value">{{ selectedTemplate.title }}</span>
           </div>
           <div class="drawer-field">
-            <span class="field-label">\u89d2\u8272\u8bbe\u5b9a</span>
+            <span class="field-label">角色设定</span>
             <span class="field-value">{{ selectedTemplate.role }}</span>
           </div>
           <div class="drawer-field">
-            <span class="field-label">\u53d8\u91cf</span>
+            <span class="field-label">变量</span>
             <div v-if="selectedTemplate.variables && selectedTemplate.variables.length > 0">
               <el-tag
                 v-for="v in selectedTemplate.variables"
@@ -176,17 +176,17 @@ onMounted(loadTemplates)
                 {{ v }}
               </el-tag>
             </div>
-            <span v-else class="field-value-none">\u65e0</span>
+            <span v-else class="field-value-none">无</span>
           </div>
           <div class="drawer-field">
-            <span class="field-label">\u4f7f\u7528\u573a\u666f</span>
+            <span class="field-label">使用场景</span>
             <span class="field-value">{{ selectedTemplate.scenario }}</span>
           </div>
         </div>
 
         <div class="drawer-section">
           <div class="drawer-section-header">
-            <h4 class="drawer-section-title">\u6a21\u677f\u5185\u5bb9</h4>
+            <h4 class="drawer-section-title">模板内容</h4>
             <el-button
               size="small"
               text
@@ -194,7 +194,7 @@ onMounted(loadTemplates)
               :icon="CopyDocument"
               @click="copyTemplateText"
             >
-              \u590d\u5236
+              复制
             </el-button>
           </div>
           <pre class="template-code"><code>{{ selectedTemplate.template_text }}</code></pre>

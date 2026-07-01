@@ -8,6 +8,7 @@ import MarkdownRenderer from '@/components/MarkdownRenderer.vue'
 import StreamReconnector from '@/components/StreamReconnector.vue'
 import TimeoutFallback from '@/components/TimeoutFallback.vue'
 import ErrorBoundary from '@/components/ErrorBoundary.vue'
+import FavoriteButton from '@/components/FavoriteButton.vue'
 
 const chatStore = useChatStore()
 const messageListRef = ref<HTMLElement | null>(null)
@@ -210,6 +211,13 @@ onBeforeUnmount(() => {
                   <span v-else>{{ message.content }}</span>
                 </ErrorBoundary>
               </template>
+            </div>
+
+            <div v-if="message.role === 'assistant' && !message.loading && message.content" class="message-actions">
+              <FavoriteButton
+                :question="chatStore.messages.filter(m => m.role === 'user' && m.content).slice(-1)[0]?.content || ''"
+                :answer="message.content"
+              />
             </div>
 
             <TimeoutFallback

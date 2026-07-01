@@ -14,7 +14,7 @@ async function loadFavorites(): Promise<void> {
     const data = await favoritesApi.list()
     favorites.value = data
   } catch {
-    ElMessage.error('\u52a0\u8f7d\u6536\u85cf\u5931\u8d25')
+    ElMessage.error('加载收藏失败')
   } finally {
     loading.value = false
   }
@@ -23,17 +23,17 @@ async function loadFavorites(): Promise<void> {
 async function removeFavorite(id: number): Promise<void> {
   try {
     await ElMessageBox.confirm(
-      '\u786e\u5b9a\u8981\u5220\u9664\u8be5\u6536\u85cf\u5417\uff1f',
-      '\u786e\u8ba4\u5220\u9664',
+      '确定要删除该收藏吗？',
+      '确认删除',
       {
-        confirmButtonText: '\u5220\u9664',
-        cancelButtonText: '\u53d6\u6d88',
+        confirmButtonText: '删除',
+        cancelButtonText: '取消',
         type: 'warning',
       },
     )
     await favoritesApi.remove(id)
     favorites.value = favorites.value.filter((f) => f.id !== id)
-    ElMessage.success('\u5df2\u5220\u9664\u6536\u85cf')
+    ElMessage.success('已删除收藏')
   } catch {
     // User cancelled or error - handled silently
   }
@@ -55,9 +55,9 @@ onMounted(loadFavorites)
 <template>
   <div class="favorites-view">
     <div class="page-header">
-      <h2>\u6536\u85cf\u5939</h2>
+      <h2>收藏夹</h2>
       <span class="header-count" v-if="favorites.length > 0"
-        >\u5171 {{ favorites.length }} \u9879</span
+        >共 {{ favorites.length }} 项</span
       >
     </div>
 
@@ -97,7 +97,7 @@ onMounted(loadFavorites)
                     effect="plain"
                     class="node-tag"
                   >
-                    \u8282\u70b9 #{{ fav.node_id }}
+                    节点 #{{ fav.node_id }}
                   </el-tag>
                 </div>
               </div>
@@ -116,7 +116,7 @@ onMounted(loadFavorites)
 
         <el-empty
           v-else
-          description="\u6682\u65e0\u6536\u85cf\uff0c\u5728\u5bf9\u8bdd\u4e2d\u70b9\u51fb\u2b50\u6536\u85cf"
+          description="暂无收藏，在对话中点击⭐收藏"
           :image-size="80"
         >
           <template #image>

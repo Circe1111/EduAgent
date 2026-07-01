@@ -80,6 +80,18 @@ async def _stream_content(content: str) -> AsyncGenerator[str, None]:
     yield "data: [DONE]\n\n"
 
 
+GREETINGS = {"你好", "hello", "hi", "在吗", "在不在", "您好", "hey", "上午好", "下午好", "晚上好"}
+
+
+def _is_greeting(query: str) -> bool:
+    """Check if query is a greeting, return short response directly."""
+    q = query.strip().lower()
+    for g in GREETINGS:
+        if g in q or q == g:
+            return True
+    return False
+
+
 @router.post("/chat", response_model=SessionContext)
 async def chat(
     request: ChatRequest,
@@ -90,6 +102,21 @@ async def chat(
     Run the full agent orchestration pipeline for a chat query.
     """
     try:
+        # Greeting short-circuit
+        if _is_greeting(request.query):
+            from app.models.content import GeneratedContent
+            return SessionContext(
+                session_id=request.session_id,
+                user_id=request.user_id,
+                task_spec={"query": request.query},
+                generated_content=GeneratedContent(
+                    content="你好！我是 EduAgent，你的 Python 学习助手。我可以帮你解答问题、生成练习题、规划学习路径。有什么想学的吗？",
+                    content_type="greeting",
+                    confidence=1.0,
+                ),
+                metadata={"from_cache": False, "intent_time": 0},
+            )
+
         context = SessionContext(
             session_id=request.session_id,
             user_id=request.user_id,

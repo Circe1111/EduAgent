@@ -15,28 +15,22 @@ const defaultBadges: Badge[] = [
   { code: 'EXPLORER', name: '探索者', condition: '完成所有知识节点学习', earned: false, earned_at: null },
 ]
 
-function badgeIcon(code: string): string {
-  const icons: Record<string, string> = {
-    FIRST_COMPLETE: '1',
-    STREAK_7: '7',
-    SCHOLAR: 'S',
-    SPEED_RUNNER: '>',
-    QUIZ_MASTER: 'Q',
-    EXPLORER: 'E',
-  }
-  return icons[code] || '?'
+interface BadgeIcon {
+  icon: string
+  color: string
+  gradient: string
 }
 
-function badgeColor(code: string): string {
-  const colors: Record<string, string> = {
-    FIRST_COMPLETE: '#f56c6c',
-    STREAK_7: '#e6a23c',
-    SCHOLAR: '#409eff',
-    SPEED_RUNNER: '#67c23a',
-    QUIZ_MASTER: '#909399',
-    EXPLORER: '#b37feb',
+function badgeInfo(code: string): BadgeIcon {
+  const map: Record<string, BadgeIcon> = {
+    FIRST_COMPLETE: { icon: '★', color: '#f56c6c', gradient: 'linear-gradient(135deg, #f56c6c, #e74c3c)' },
+    STREAK_7: { icon: '♨', color: '#e6a23c', gradient: 'linear-gradient(135deg, #e6a23c, #f39c12)' },
+    SCHOLAR: { icon: '♥', color: '#409eff', gradient: 'linear-gradient(135deg, #409eff, #2980b9)' },
+    SPEED_RUNNER: { icon: '⚡', color: '#67c23a', gradient: 'linear-gradient(135deg, #67c23a, #27ae60)' },
+    QUIZ_MASTER: { icon: '✦', color: '#909399', gradient: 'linear-gradient(135deg, #a0a4a8, #7f8c8d)' },
+    EXPLORER: { icon: '♦', color: '#b37feb', gradient: 'linear-gradient(135deg, #b37feb, #8e44ad)' },
   }
-  return colors[code] || '#909399'
+  return map[code] || { icon: '?', color: '#909399', gradient: 'linear-gradient(135deg, #bdc3c7, #95a5a6)' }
 }
 
 async function loadBadges() {
@@ -88,9 +82,9 @@ onMounted(loadBadges)
           >
             <div
               class="badge-icon-wrapper"
-              :style="{ backgroundColor: badge.earned ? badgeColor(badge.code) : '#f0f0f0' }"
+              :style="{ background: badge.earned ? badgeInfo(badge.code).gradient : '#f0f0f0' }"
             >
-              <span class="badge-icon-text">{{ badgeIcon(badge.code) }}</span>
+              <span class="badge-icon-text" :class="{ earned: badge.earned }">{{ badgeInfo(badge.code).icon }}</span>
             </div>
             <div class="badge-name">{{ badge.name }}</div>
             <div class="badge-condition">{{ badge.condition }}</div>
@@ -164,6 +158,16 @@ onMounted(loadBadges)
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
   border-color: transparent;
+}
+
+.badge-card.earned .badge-icon-text.earned {
+  filter: drop-shadow(0 0 6px currentColor);
+  animation: badgePulse 3s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.08); opacity: 0.85; }
 }
 
 .badge-icon-wrapper {

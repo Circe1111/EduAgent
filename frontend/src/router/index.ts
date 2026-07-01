@@ -25,19 +25,19 @@ const routes: RouteRecordRaw[] = [
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/DashboardView.vue'),
-    meta: { requiresAuth: true, title: '\u9996\u9875' },
+    meta: { requiresAuth: true, title: '首页' },
   },
   {
     path: '/prompts',
     name: 'PromptTemplates',
     component: () => import('@/views/PromptTemplatesView.vue'),
-    meta: { requiresAuth: true, title: 'Prompt\u6a21\u677f' },
+    meta: { requiresAuth: true, title: 'Prompt模板' },
   },
   {
     path: '/favorites',
     name: 'Favorites',
     component: () => import('@/views/FavoritesView.vue'),
-    meta: { requiresAuth: true, title: '\u6536\u85cf\u5939' },
+    meta: { requiresAuth: true, title: '收藏夹' },
   },
   {
     path: '/path',

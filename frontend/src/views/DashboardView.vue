@@ -66,30 +66,30 @@ function countWeekStudyDays(entries: CalendarEntry[]): number {
 
 function formatMinutes(minutes: number): string {
   if (minutes < 60) {
-    return `${minutes}\u5206\u949f`
+    return `${minutes}分钟`
   }
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
   if (mins === 0) {
-    return `${hours}\u5c0f\u65f6`
+    return `${hours}小时`
   }
-  return `${hours}\u5c0f\u65f6${mins}\u5206\u949f`
+  return `${hours}小时${mins}分钟`
 }
 
 function formatSeconds(seconds: number): string {
   if (seconds < 60) {
-    return `${seconds}\u79d2`
+    return `${seconds}秒`
   }
   const minutes = Math.floor(seconds / 60)
   if (minutes < 60) {
-    return `${minutes}\u5206\u949f`
+    return `${minutes}分钟`
   }
   const hours = Math.floor(minutes / 60)
   const mins = minutes % 60
   if (mins === 0) {
-    return `${hours}\u5c0f\u65f6`
+    return `${hours}小时`
   }
-  return `${hours}\u5c0f\u65f6${mins}\u5206\u949f`
+  return `${hours}小时${mins}分钟`
 }
 
 async function loadData(): Promise<void> {
@@ -134,10 +134,10 @@ onMounted(loadData)
   <div class="dashboard-view">
     <div class="welcome-section">
       <h2 class="welcome-title">
-        \u6b22\u8fce\u56de\u6765\uff0c{{ auth.user?.username || '\u7528\u6237' }}
+        欢迎回来，{{ auth.user?.username || '用户' }}
       </h2>
       <p class="welcome-subtitle">
-        \u4eca\u5929\u4e5f\u8981\u52a0\u6cb9\u5b66\u4e60\u54e6\uff01
+        今天也要加油学习哦！
       </p>
     </div>
 
@@ -164,7 +164,7 @@ onMounted(loadData)
                 <div class="stat-value">
                   {{ formatMinutes(statsData.today_minutes) }}
                 </div>
-                <div class="stat-label">\u4eca\u65e5\u5b66\u4e60\u65f6\u957f</div>
+                <div class="stat-label">今日学习时长</div>
               </div>
             </div>
           </el-card>
@@ -175,8 +175,8 @@ onMounted(loadData)
                 <el-icon :size="24"><Calendar /></el-icon>
               </div>
               <div class="stat-info">
-                <div class="stat-value">{{ weekStudyDays }}\u5929</div>
-                <div class="stat-label">\u672c\u5468\u5b66\u4e60\u5929\u6570</div>
+                <div class="stat-value">{{ weekStudyDays }}天</div>
+                <div class="stat-label">本周学习天数</div>
               </div>
             </div>
           </el-card>
@@ -188,9 +188,9 @@ onMounted(loadData)
               </div>
               <div class="stat-info">
                 <div class="stat-value">
-                  {{ statsData.total_sessions }}\u6b21
+                  {{ statsData.total_sessions }}次
                 </div>
-                <div class="stat-label">\u603b\u5b66\u4e60\u6b21\u6570</div>
+                <div class="stat-label">总学习次数</div>
               </div>
             </div>
           </el-card>
@@ -202,9 +202,9 @@ onMounted(loadData)
               </div>
               <div class="stat-info">
                 <div class="stat-value">
-                  {{ currentStreak }}\u5929
+                  {{ currentStreak }}天
                 </div>
-                <div class="stat-label">\u5f53\u524d\u8fde\u7eed\u5929\u6570</div>
+                <div class="stat-label">当前连续天数</div>
               </div>
             </div>
           </el-card>
@@ -212,14 +212,14 @@ onMounted(loadData)
 
         <el-empty
           v-else
-          description="\u6682\u65e0\u5b66\u4e60\u6570\u636e\uff0c\u5feb\u53bb\u5b66\u4e60\u5427"
+          description="暂无学习数据，快去学习吧"
           :image-size="80"
         />
       </template>
     </el-skeleton>
 
     <div class="section">
-      <h3 class="section-title">\u5feb\u901f\u5165\u53e3</h3>
+      <h3 class="section-title">快速入口</h3>
       <div class="quick-actions">
         <el-card
           class="action-card"
@@ -231,8 +231,8 @@ onMounted(loadData)
               <el-icon :size="28"><ArrowRight /></el-icon>
             </div>
             <div class="action-text">
-              <div class="action-title">\u7ee7\u7eed\u5b66\u4e60</div>
-              <div class="action-desc">\u8fdb\u5165\u5bf9\u8bdd\u4e0eAI\u4e92\u52a8</div>
+              <div class="action-title">继续学习</div>
+              <div class="action-desc">进入对话与AI互动</div>
             </div>
           </div>
         </el-card>
@@ -247,8 +247,8 @@ onMounted(loadData)
               <el-icon :size="28"><ArrowRight /></el-icon>
             </div>
             <div class="action-text">
-              <div class="action-title">\u67e5\u770b\u5b66\u4e60\u8def\u5f84</div>
-              <div class="action-desc">\u4e86\u89e3\u4f60\u7684\u5b66\u4e60\u8ba1\u5212</div>
+              <div class="action-title">查看学习路径</div>
+              <div class="action-desc">了解你的学习计划</div>
             </div>
           </div>
         </el-card>
@@ -263,8 +263,8 @@ onMounted(loadData)
               <el-icon :size="28"><ArrowRight /></el-icon>
             </div>
             <div class="action-text">
-              <div class="action-title">AI\u6d4b\u9a8c</div>
-              <div class="action-desc">\u901a\u8fc7\u95ee\u7b54\u68c0\u6d4b\u5b66\u4e60\u6548\u679c</div>
+              <div class="action-title">AI测验</div>
+              <div class="action-desc">通过问答检测学习效果</div>
             </div>
           </div>
         </el-card>
@@ -272,7 +272,7 @@ onMounted(loadData)
     </div>
 
     <div class="section">
-      <h3 class="section-title">\u6700\u8fd1\u6d3b\u52a8</h3>
+      <h3 class="section-title">最近活动</h3>
       <el-skeleton :loading="loading" animated :count="3">
         <template #default>
           <el-card v-if="recentActivity.length > 0" shadow="never" class="activity-card">
@@ -294,7 +294,7 @@ onMounted(loadData)
 
           <el-empty
             v-else
-            description="\u6682\u65e0\u6d3b\u52a8\u8bb0\u5f55"
+            description="暂无活动记录"
             :image-size="60"
           />
         </template>

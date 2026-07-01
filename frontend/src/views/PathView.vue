@@ -28,22 +28,81 @@ interface ResourceItem {
   url: string
 }
 
+const BILIBILI_SEARCH = (kw: string) =>
+  `https://search.bilibili.com/all?keyword=${encodeURIComponent(kw + ' Python 教程')}`
+
 const resourceMap: Record<string, ResourceItem[]> = {
   'Python基础语法': [
-    { type: 'video', name: 'Python入门视频', url: '#' },
-    { type: 'doc', name: '语法速查表', url: '#' },
+    { type: 'video', name: 'Python入门教程', url: BILIBILI_SEARCH('Python入门') },
+    { type: 'doc', name: 'Python官方文档', url: 'https://docs.python.org/zh-cn/3/tutorial/' },
   ],
   '变量与数据类型': [
-    { type: 'video', name: '变量详解', url: '#' },
+    { type: 'video', name: '变量与数据类型讲解', url: BILIBILI_SEARCH('Python变量数据类型') },
     { type: 'quiz', name: '变量测验', url: '#' },
   ],
+  '运算符与表达式': [
+    { type: 'video', name: '运算符教学', url: BILIBILI_SEARCH('Python运算符') },
+    { type: 'doc', name: '运算符参考', url: 'https://docs.python.org/zh-cn/3/reference/expressions.html' },
+  ],
   '控制流': [
-    { type: 'video', name: '控制流教学', url: '#' },
-    { type: 'doc', name: '条件循环笔记', url: '#' },
+    { type: 'video', name: '条件与循环', url: BILIBILI_SEARCH('Python控制流') },
+    { type: 'doc', name: '控制流参考', url: 'https://docs.python.org/zh-cn/3/tutorial/controlflow.html' },
+  ],
+  '字符串': [
+    { type: 'video', name: '字符串操作教学', url: BILIBILI_SEARCH('Python字符串') },
+    { type: 'quiz', name: '字符串练习', url: '#' },
+  ],
+  '列表与元组': [
+    { type: 'video', name: '列表与元组详解', url: BILIBILI_SEARCH('Python列表元组') },
+    { type: 'doc', name: '数据结构文档', url: 'https://docs.python.org/zh-cn/3/tutorial/datastructures.html' },
+  ],
+  '字典与集合': [
+    { type: 'video', name: '字典与集合教学', url: BILIBILI_SEARCH('Python字典集合') },
+    { type: 'quiz', name: '字典练习', url: '#' },
   ],
   '函数': [
-    { type: 'video', name: '函数编程', url: '#' },
-    { type: 'quiz', name: '函数练习', url: '#' },
+    { type: 'video', name: '函数编程教学', url: BILIBILI_SEARCH('Python函数') },
+    { type: 'doc', name: '函数文档', url: 'https://docs.python.org/zh-cn/3/tutorial/controlflow.html#defining-functions' },
+  ],
+  '模块与包': [
+    { type: 'video', name: '模块与包教学', url: BILIBILI_SEARCH('Python模块包') },
+    { type: 'doc', name: '模块文档', url: 'https://docs.python.org/zh-cn/3/tutorial/modules.html' },
+  ],
+  '文件操作': [
+    { type: 'video', name: '文件操作教学', url: BILIBILI_SEARCH('Python文件操作') },
+    { type: 'doc', name: '文件IO文档', url: 'https://docs.python.org/zh-cn/3/tutorial/inputoutput.html' },
+  ],
+  '异常处理': [
+    { type: 'video', name: '异常处理教学', url: BILIBILI_SEARCH('Python异常处理') },
+    { type: 'quiz', name: '异常处理练习', url: '#' },
+  ],
+  '面向对象基础': [
+    { type: 'video', name: '面向对象教学', url: BILIBILI_SEARCH('Python面向对象') },
+    { type: 'doc', name: '类文档', url: 'https://docs.python.org/zh-cn/3/tutorial/classes.html' },
+  ],
+  '继承与多态': [
+    { type: 'video', name: '继承与多态教学', url: BILIBILI_SEARCH('Python继承多态') },
+    { type: 'quiz', name: '继承练习', url: '#' },
+  ],
+  '正则表达式': [
+    { type: 'video', name: '正则表达式教学', url: BILIBILI_SEARCH('Python正则表达式') },
+    { type: 'doc', name: 're模块文档', url: 'https://docs.python.org/zh-cn/3/library/re.html' },
+  ],
+  '网络编程': [
+    { type: 'video', name: '网络编程教学', url: BILIBILI_SEARCH('Python网络编程') },
+    { type: 'doc', name: 'socket文档', url: 'https://docs.python.org/zh-cn/3/library/socket.html' },
+  ],
+  '数据库编程': [
+    { type: 'video', name: '数据库编程教学', url: BILIBILI_SEARCH('Python数据库') },
+    { type: 'doc', name: 'sqlite3文档', url: 'https://docs.python.org/zh-cn/3/library/sqlite3.html' },
+  ],
+  '图形界面': [
+    { type: 'video', name: '图形界面教学', url: BILIBILI_SEARCH('Python图形界面') },
+    { type: 'doc', name: 'tkinter文档', url: 'https://docs.python.org/zh-cn/3/library/tkinter.html' },
+  ],
+  '综合项目': [
+    { type: 'video', name: '项目实战教程', url: BILIBILI_SEARCH('Python项目实战') },
+    { type: 'doc', name: '项目参考', url: 'https://docs.python.org/zh-cn/3/tutorial/' },
   ],
 }
 
