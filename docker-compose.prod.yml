@@ -1,0 +1,48 @@
+# =============================================================================
+# EduAgent 2.0 - Production Deployment
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+# =============================================================================
+
+services:
+  mysql:
+    ports:
+      - "127.0.0.1:3307:3306"        # Only localhost access
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/scripts/migration.sql:/docker-entrypoint-initdb.d/init.sql
+
+  redis:
+    ports: []                          # No external access
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+  qdrant:
+    ports: []                          # No external access
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+  backend:
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+          cpus: "1.0"
+    restart: always
+
+  frontend:
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+    restart: always

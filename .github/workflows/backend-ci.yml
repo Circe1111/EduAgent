@@ -1,0 +1,104 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - "backend/**"
+      - ".github/workflows/backend-ci.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "backend/**"
+
+env:
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: uv pip install --system -r requirements.txt
+
+      - name: Ruff lint
+        working-directory: ./backend
+        run: ruff check .
+
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: uv pip install --system -r requirements.txt
+
+      - name: Pyright type check
+        working-directory: ./backend
+        run: pyright .
+
+  test:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root123
+          MYSQL_DATABASE: eduagent_test
+          MYSQL_USER: eduagent
+          MYSQL_PASSWORD: eduagent123
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping -h localhost"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        working-directory: ./backend
+        run: uv pip install --system -r requirements.txt
+
+      - name: Run tests
+        working-directory: ./backend
+        env:
+          DEEPSEEK_API_KEY: test-skip-key
+          MYSQL_HOST: localhost
+          MYSQL_PORT: 3306
+          MYSQL_USER: eduagent
+          MYSQL_PASSWORD: eduagent123
+          MYSQL_DATABASE: eduagent_test
+          REDIS_HOST: localhost
+          REDIS_PORT: 6379
+        run: pytest -v --tb=short
