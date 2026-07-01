@@ -272,6 +272,17 @@ onBeforeUnmount(() => {
         </div>
       </el-tab-pane>
 
+      <!-- Logout -->
+      <el-tab-pane label="退出登录" name="logout">
+        <div class="tab-content">
+          <h3 class="tab-title">切换账号</h3>
+          <p class="tab-desc">退出当前账号，返回登录页面。</p>
+          <el-button @click="authStore.logout(); router.push('/login')" type="warning">
+            退出登录
+          </el-button>
+        </div>
+      </el-tab-pane>
+
       <!-- Delete Account -->
       <el-tab-pane label="注销账户" name="account">
         <div class="tab-content">

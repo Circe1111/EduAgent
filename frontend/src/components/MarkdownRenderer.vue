@@ -168,7 +168,7 @@ function renderContent(): void {
     return
   }
 
-  const raw = props.content
+  const raw = props.content.replace(/\\n/g, '\n')
   const html = libs.value.marked.parse(raw, {
     breaks: true,
     gfm: true,
@@ -256,6 +256,8 @@ onBeforeUnmount(() => {
   font-size: 14px;
   line-height: 1.7;
   color: #303133;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .markdown-body :deep(h1) {

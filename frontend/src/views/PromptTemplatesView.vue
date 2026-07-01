@@ -5,6 +5,7 @@ import type { PromptTemplate } from '@/api'
 import {
   Search,
   CopyDocument,
+  Promotion,
 } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 
@@ -13,6 +14,8 @@ const templates = ref<PromptTemplate[]>([])
 const searchQuery = ref('')
 const drawerVisible = ref(false)
 const selectedTemplate = ref<PromptTemplate | null>(null)
+const varValues = ref<Record<string, string>>({})
+const filledText = ref('')
 
 const filteredTemplates = computed(() => {
   if (!searchQuery.value.trim()) {
@@ -41,12 +44,20 @@ async function loadTemplates(): Promise<void> {
 
 function openDetail(template: PromptTemplate): void {
   selectedTemplate.value = template
+  const vars: Record<string, string> = {}
+  if (template.variables && template.variables.length > 0) {
+    template.variables.forEach(v => { vars[v] = '' })
+  }
+  varValues.value = vars
+  filledText.value = ''
   drawerVisible.value = true
 }
 
 function closeDetail(): void {
   drawerVisible.value = false
   selectedTemplate.value = null
+  varValues.value = {}
+  filledText.value = ''
 }
 
 async function copyTemplateText(): Promise<void> {
@@ -57,6 +68,39 @@ async function copyTemplateText(): Promise<void> {
   } catch {
     ElMessage.error('复制失败')
   }
+}
+
+function updateFilledTemplate(): void {
+  if (!selectedTemplate.value) return
+  let text = selectedTemplate.value.template_text
+  for (const [key, val] of Object.entries(varValues.value)) {
+    if (val) {
+      text = text.replace(new RegExp(`\\{${key}\\}`, 'g'), val)
+    }
+  }
+  filledText.value = text
+}
+
+async function copyFilledText(): Promise<void> {
+  if (!filledText.value) return
+  try {
+    await navigator.clipboard.writeText(filledText.value)
+    ElMessage.success('已复制填充后的模板')
+  } catch {
+    ElMessage.error('复制失败')
+  }
+}
+
+async function sendToChat(): Promise<void> {
+  if (!filledText.value) return
+  const { useChatStore } = await import('@/stores/chat')
+  const chatStore = useChatStore()
+  chatStore.currentInput = filledText.value
+  drawerVisible.value = false
+  selectedTemplate.value = null
+  varValues.value = {}
+  filledText.value = ''
+  ElMessage.success('已填入对话输入框，点击发送即可使用')
 }
 
 onMounted(loadTemplates)
@@ -164,17 +208,17 @@ onMounted(loadTemplates)
           </div>
           <div class="drawer-field">
             <span class="field-label">变量</span>
-            <div v-if="selectedTemplate.variables && selectedTemplate.variables.length > 0">
-              <el-tag
-                v-for="v in selectedTemplate.variables"
-                :key="v"
-                size="small"
-                type="info"
-                effect="plain"
-                class="var-tag"
-              >
-                {{ v }}
-              </el-tag>
+            <div v-if="selectedTemplate.variables && selectedTemplate.variables.length > 0" class="var-inputs">
+              <div v-for="v in selectedTemplate.variables" :key="v" class="var-input-row">
+                <span class="var-input-label">{{ v }}:</span>
+                <el-input
+                  v-model="varValues[v]"
+                  :placeholder="'输入' + v"
+                  size="small"
+                  class="var-input"
+                  @input="updateFilledTemplate"
+                />
+              </div>
             </div>
             <span v-else class="field-value-none">无</span>
           </div>
@@ -194,10 +238,25 @@ onMounted(loadTemplates)
               :icon="CopyDocument"
               @click="copyTemplateText"
             >
-              复制
+              复制原文
             </el-button>
           </div>
           <pre class="template-code"><code>{{ selectedTemplate.template_text }}</code></pre>
+        </div>
+
+        <div v-if="filledText" class="drawer-section">
+          <div class="drawer-section-header">
+            <h4 class="drawer-section-title">填充后内容</h4>
+            <div class="drawer-actions-row">
+              <el-button size="small" text type="primary" :icon="CopyDocument" @click="copyFilledText">
+                复制
+              </el-button>
+              <el-button size="small" type="primary" :icon="Promotion" @click="sendToChat">
+                发送到对话
+              </el-button>
+            </div>
+          </div>
+          <pre class="template-code filled"><code>{{ filledText }}</code></pre>
         </div>
       </template>
     </el-drawer>

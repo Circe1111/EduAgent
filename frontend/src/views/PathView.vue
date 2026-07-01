@@ -12,6 +12,7 @@ import {
 } from '@element-plus/icons-vue'
 import { studyApi } from '@/api'
 import QuizModal from '@/components/QuizModal.vue'
+import { ElMessage } from 'element-plus'
 
 interface PathNode {
   knowledge_point: string
@@ -157,10 +158,23 @@ function startLearning(): void {
     quizNodeName.value = selectedNode.value.knowledge_point
     quizModalVisible.value = true
   } else {
-    // Open first video/doc resource
     if (resources.length > 0) {
       window.open(resources[0].url, '_blank')
     }
+  }
+}
+
+async function markComplete(): Promise<void> {
+  if (!selectedNode.value) return
+  try {
+    const { studyApi } = await import('@/api')
+    await studyApi.log({ node_id: selectedNode.value.order, duration_seconds: 600 })
+    selectedNode.value.status = 'completed'
+    const node = pathNodes.value.find(n => n.knowledge_point === selectedNode.value!.knowledge_point)
+    if (node) node.status = 'completed'
+    ElMessage.success('已标记完成')
+  } catch {
+    ElMessage.error('标记失败')
   }
 }
 
@@ -366,14 +380,24 @@ onMounted(loadPath)
           />
         </div>
 
-        <div class="drawer-actions" v-if="selectedNode.status !== 'completed'">
+        <div class="drawer-actions">
           <el-button
+            v-if="selectedNode.status !== 'completed'"
             type="primary"
             size="large"
             class="start-btn"
             @click="startLearning"
           >
             开始学习
+          </el-button>
+          <el-button
+            v-if="selectedNode.status === 'in_progress'"
+            type="success"
+            size="large"
+            plain
+            @click="markComplete"
+          >
+            标记完成
           </el-button>
         </div>
       </template>
